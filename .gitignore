@@ -1,0 +1,7 @@
+.idea
+dev_venv/
+__pycache__/
+dist
+build
+.eggs
+drug_analysis_pipeline.egg-info/
