@@ -1,8 +1,6 @@
-from abc import ABCMeta, abstractmethod
 from drug_analysis_pipeline.src.helper.spark import spark
 from drug_analysis_pipeline.src.schema.schemas import drug_schema, pubmed_schema, clinical_trial_schema
 from pyspark.sql.functions import *
-from drug_analysis_pipeline.src.helper.date_mapper import date_mapper
 
 class DataParser():
     '''
@@ -11,7 +9,7 @@ class DataParser():
         return spark.read.schema(schema)\
             .format("csv")\
             .option("sep", separator)\
-            .option("header", "true")\
+            .option("header", str(header).lower())\
             .load(filepath)
 
     def parse_json(self, filepath, schema):
