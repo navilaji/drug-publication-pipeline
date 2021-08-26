@@ -34,9 +34,12 @@ if __name__ == '__main__':
         .format('json') \
         .mode('overwrite') \
         .save(result_dir)
+
     logging.info(f"The resualt has been written to {result_dir}")
+
     result = drug_pub_analyse_service.find_top_journal_from_file(f'{result_dir}/*.json')
-    print(result)
+
+    logging.info(f"The top journal is : {result}")
 
 
 
