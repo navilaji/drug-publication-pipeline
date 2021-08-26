@@ -35,7 +35,7 @@ if __name__ == '__main__':
         .mode('overwrite') \
         .save(result_dir)
     logging.info(f"The resualt has been written to {result_dir}")
-    result = drug_pub_analyse_service.find_top_mentioning_journal(f'{result_dir}/*.json')
+    result = drug_pub_analyse_service.find_top_journal_from_file(f'{result_dir}/*.json')
     print(result)
 
 

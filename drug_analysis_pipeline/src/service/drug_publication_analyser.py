@@ -21,7 +21,7 @@ class DrugPublicationAnalyseService():
         return drugs.join(pubmeds, upper(pubmeds.title).contains(upper(drugs.drug)), "left") \
                     .withColumn(PUBMEDS_COL, \
                         when(pubmeds.title.isNull(), expr("null")) \
-                        .otherwise(struct(trim(regexp_replace(pubmeds.title, REGEX,'')).alias(TITLE_COL), pubmeds.date))) \
+                        .otherwise(struct(trim(regexp_replace(pubmeds.title, REGEX,'')).alias(TITLE_COL), pubmeds.journal, pubmeds.date))) \
                     .withColumn(JOURNAL_INFO_COL, \
                         when(pubmeds.journal.isNull(), expr("null")) \
                         .otherwise(struct(lower(trim(regexp_replace(pubmeds.journal, REGEX, ''))).alias(JOURNAL_COL), pubmeds.date))) \
@@ -35,7 +35,7 @@ class DrugPublicationAnalyseService():
                         .otherwise(struct(lower(trim(regexp_replace(clinical_trials.journal, REGEX, ''))).alias(JOURNAL_COL), clinical_trials.date))) \
                     .withColumn(CLINICALS_TRIAL_COL, \
                          when(col(SC_TITLE_COL).isNull(), expr("null")) \
-                        .otherwise(struct(trim(regexp_replace(clinical_trials.scientific_title,REGEX,'')).alias(SC_TITLE_COL), clinical_trials.date))) \
+                        .otherwise(struct(trim(regexp_replace(clinical_trials.scientific_title,REGEX,'')).alias(SC_TITLE_COL), clinical_trials.journal, clinical_trials.date))) \
                     .drop(ATCCIDE_COL, ID_COL, JOURNAL_COL, DATE_COL, SC_TITLE_COL)) \
             .groupBy(DRUG_COL)\
             .agg(collect_list(JOURNAL_INFO_COL).alias("journals"), \
@@ -43,11 +43,11 @@ class DrugPublicationAnalyseService():
                collect_list(CLINICALS_TRIAL_COL).alias(CLINICALS_TRIAL_COL)) \
             .orderBy(DRUG_COL)
 
-    def find_top_mentioning_journal(self, graph_path):
+    def find_top_journal_from_file(self, graph_path):
         graph = spark.read.json(graph_path)
-        return self.get_top_journal_in_graph_df(graph)
+        return self.find_top_journal_from_dataframe(graph)
 
-    def get_top_journal_in_graph_df(self, graph_df):
+    def find_top_journal_from_dataframe(self, graph_df):
         row = graph_df.select(col(DRUG_COL), explode(col("journals").journal).alias("journal")) \
             .dropDuplicates([JOURNAL_COL, DRUG_COL]) \
             .groupBy(col(JOURNAL_COL).alias(JOURNAL_COL)) \
