@@ -28,7 +28,8 @@ Vous devez aussi mettre en place (hors de la data pipeline, vous pouvez considé
 Le command-line pour lancer le pipeline à partir de la root directory du projet:
     
     python -m drug_analysis_pipeline resources/drugs.csv \
-        resources/pubmed.csv resources/pubmed.json \
+        resources/pubmed.csv \
+        resources/pubmed.json \
         resources/clinical_trials.csv \
         output
         

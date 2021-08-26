@@ -17,7 +17,19 @@ TITLE_COL = "title"
 PUBMEDS_COL = "pubmeds"
 
 class DrugPublicationAnalyseService():
+    '''
+    This class is responsible for generating a graph showing the relation between the drugs and medical publications,
+    clinical trialas, and journals.
+    '''
     def gen_drug_pub_graph_df(self, drugs, pubmeds, clinical_trials):
+        '''
+        Finds the list of medical publication, clinical trials, and journals mentioning each drug,
+        and then generates a graph representing these informations.
+        :param drugs: drugs dataframe
+        :param pubmeds: pubmeds dataframe
+        :param clinical_trials: clinical trial dataframe
+        :return: dataframe containing the generated graph
+        '''
         return drugs.join(pubmeds, upper(pubmeds.title).contains(upper(drugs.drug)), "left") \
                     .withColumn(PUBMEDS_COL, \
                         when(pubmeds.title.isNull(), expr("null")) \
@@ -44,10 +56,22 @@ class DrugPublicationAnalyseService():
             .orderBy(DRUG_COL)
 
     def find_top_journal_from_file(self, graph_path):
+        '''
+        It finds the journal mentioning the most number of different drugs form the generated json file containing the graph generated
+        by gen_drug_pub_graph_df.
+        :param graph_path: path to the json file containing the graph
+        :return: a dict containing the name of the journal and the number of drugs that it mentions
+        '''
         graph = spark.read.json(graph_path)
         return self.find_top_journal_from_dataframe(graph)
 
     def find_top_journal_from_dataframe(self, graph_df):
+        '''
+        It finds the journal mentioning the most number of different drugs form the generated dataframe generated
+        by gen_drug_pub_graph_df.
+        :param graph_path: dataframe containing the graph
+        :return: a dict containing the name of the journal and the number of drugs that it mentions
+        '''
         row = graph_df.select(col(DRUG_COL), explode(col("journals").journal).alias("journal")) \
             .dropDuplicates([JOURNAL_COL, DRUG_COL]) \
             .groupBy(col(JOURNAL_COL).alias(JOURNAL_COL)) \
