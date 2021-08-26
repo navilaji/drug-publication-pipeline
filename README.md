@@ -48,6 +48,10 @@ J'ai créé des test sous le repertoire test, et il faut les lancer avec le pyte
 Quels sont les éléments à considérer pour faire évoluer votre code afin qu’il puisse gérer de grosses volumétries de données (fichiers de plusieurs To ou millions de fichiers par exemple) ?
 Pourriez-vous décrire les modifications qu’il faudrait apporter, s’il y en a, pour prendre en considération de telles volumétries ?
 
+La solution est d'utiliser un framework de calcul distribué comme spark ou alternativement dataflow (apache beam). Et afin d'assure que 
+le cluster spark a assez de capacité pour traiter des gros quantités des fichier gigantesque, il faut choisir une machine puissante. Aujourd'hui
+GCP nous propose le Dataproc afin de lancer telle jobs de spark. 
+Pour executer les jobs dataflow, on peut profiter du service (serverless) dataflow de google.
 
 
 8. Executer le pipeline dans un dag:
