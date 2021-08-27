@@ -63,3 +63,6 @@ Je propose deux methods afin de lancer le pipeline dans un dag d'airflow/
     
     2- Créer une image docker de notre module à partir de fichier Dockerfile, et puis executer le l'image à partir avec le KubernetesPodOperator.  
     
+9. les réponses du test de SQL sont dans les fichiers suivants:
+- sql1.sql : 1er test
+- sql2.sql : 2eme test
